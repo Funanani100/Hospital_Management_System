@@ -1,0 +1,640 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Hospital Dashboard</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: Arial, sans-serif;
+    }
+
+    /* Sidebar */
+    .sidebar {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 250px;
+      height: 100vh;
+      background-color: #0f375b;
+      color: white;
+      padding: 20px;
+    }
+
+    .sidebar h2 {
+      margin-bottom: 20px;
+    }
+
+    .sidebar ul {
+      list-style: none;
+      padding: 0;
+    }
+
+    .sidebar ul li {
+      padding: 15px;
+      cursor: pointer;
+    }
+
+    .sidebar ul .active,
+    .sidebar ul li:hover {
+      background-color: #1d4d77;
+    }
+
+    /*logout btn*/
+    .logout-btn{
+      color: #f5f7fa;
+      text-decoration: none;
+    }
+
+   .logout-btn i {
+      margin-left: 5px;
+      font-size: 20px;
+    }
+
+    /* Main Content (Dashboard) */
+    .main-content {
+      margin-left: 250px; /* Account for fixed sidebar */
+      padding: 20px;
+      background-color: #f5f7fa;
+    }
+
+    .main-content .header{
+      color: #0f375b;
+      font-size: 60px;
+      font-family: 'Times New Roman', Times, serif;
+      text-align: center;
+      margin-top: 30px;
+      margin-bottom: 30px;
+    }
+
+    /* Dashboard Cards */
+    .dashboard-cards {
+      display: flex;
+      gap: 20px;
+      margin-bottom: 20px;
+      width: 90%;
+    }
+    
+    .dashboard-cards h3 {
+      font-size: 50px;
+      color: navy;
+      font-family: 'Times New Roman', Times, serif;
+    }
+
+    .card {
+      flex: 1;
+      background: white;
+      padding: 20px;
+      text-align: center;
+      border-radius: 5px;
+      box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+    }
+
+    /* Chart */
+    .chart-container {
+      background: white;
+      padding: 20px;
+      border-radius: 5px;
+      margin-bottom: 20px;
+    }
+
+    .chart-container canvas {
+      width: 80% !important;
+      height: 370px !important;
+    }
+
+    /* Hospital Staff Section */
+    .hospital-staff {
+      opacity: 0;
+      transform: translateY(20px);
+      transition: opacity 0.5s ease-out, transform 0.5s ease-out;
+      background: white;
+      padding: 20px;
+      border-radius: 5px;
+      position: relative;
+      overflow: hidden;
+      margin-bottom: 20px;
+    }
+    /* When the main content is animated (dashboard shown), hospital staff transitions in */
+    .main-content.animate-dashboard .hospital-staff {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .staff-container {
+      display: flex;
+      align-items: center;
+      position: relative;
+    }
+
+    .staff-carousel {
+      width: 100%;
+      overflow: hidden;
+      white-space: nowrap;
+      display: flex;
+    }
+
+    .staff-cards {
+      display: flex;
+      gap: 10px;
+      width: max-content;
+      animation: scroll-left 20s linear infinite;
+      /* Performance improvements for smooth animation */
+      will-change: transform;
+      backface-visibility: hidden;
+      transform: translate3d(0, 0, 0);
+    }
+
+    .staff-card {
+      text-align: center;
+      width: 130px;
+      background: none;
+      padding: 20px;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+      border-radius: 5px;
+    }
+
+    .staff-card img {
+      width: 100px;
+      height: 100px;
+      border-radius: 50%;
+    }
+
+    /* Animation for Auto Scroll */
+    @keyframes scroll-left {
+      0% {
+        transform: translateX(0);
+      }
+      100% {
+        transform: translateX(-70%);
+      }
+    }
+
+    /* Add Doctor Form Styles */
+    .add-doctor-form {
+      background: white;
+      padding: 20px;
+      border-radius: 5px;
+      box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+      width: 400px;
+      margin: auto;
+      display: none; /* Initially hidden */
+    }
+
+    .add-doctor-form label {
+      display: block;
+      margin-bottom: 5px;
+      font-weight: bold;
+    }
+
+    .add-doctor-form input,
+    .add-doctor-form select,
+    .add-doctor-form button {
+      width: 100%;
+      margin-bottom: 15px;
+      padding: 10px;
+      border: 1px solid #ddd;
+      border-radius: 5px;
+    }
+
+    .add-doctor-form button {
+      background-color: #0f375b;
+      color: white;
+      cursor: pointer;
+    }
+
+    .add-doctor-form button:hover {
+      background-color: #1d4d77;
+    }
+
+    /* Additional Content Sections for other sidebar links */
+    .section-content {
+      flex: 1;
+      padding: 20px;
+      background-color: #f5f7fa;
+      display: none; /* Hidden by default */
+      margin-left: 250px; /* Account for fixed sidebar */
+    }
+
+    /* Utility Class to Hide Content */
+    .hidden {
+      display: none;
+    }
+
+    /* Dashboard Section Animation (fade in & slight upward motion) */
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+        transform: translateY(20px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+    .animate-dashboard {
+      animation: fadeIn 0.5s ease-in-out;
+    }
+  </style>
+</head>
+<body>
+  <!-- Sidebar -->
+  <div class="sidebar">
+    <h2>🏥LifeCare+</h2>
+    <ul>
+      <li class="active dashboard-link">Dashboard</li>
+      <li class="doctors-list-link">Doctors List</li>
+      <li class="patients-list-link">Patients List</li>
+      <li class="appointments-link">Appointment Details</li>
+      <li class="prescriptions-link">Presciption List</li>
+      <li class="add-doctor-link">Add Doctor</li>
+      <li class="delete-doctor-link">Delete Doctor</li>
+      <li class="queries-link">Queries</li>
+      <li><a href="logout.php" class="logout-btn">LogOut<i class="fa">&#xf08b;</i></a></li>
+    </ul>
+  </div>
+  <!-- Main Content (Dashboard) -->
+  <div class="main-content animate-dashboard" id="mainContent">
+    <h1 class="header">Welcome Admin</h1>
+    <!-- Dashboard Cards -->
+    <div class="dashboard-cards">
+      <div class="card">
+        <h3 data-target="520">1</h3>
+        <p>Doctors</p>
+      </div>
+      <div class="card">
+        <h3 data-target="6969">1</h3>
+        <p>Nurses</p>
+      </div>
+      <div class="card">
+        <h3 data-target="7509">1</h3>
+        <p>Patients</p>
+      </div>
+      <div class="card">
+        <h3 data-target="2110">1</h3>
+        <p>Pharmacists</p>
+      </div>
+    </div>
+
+    <!-- Chart Section -->
+    <div class="chart-container">
+      <h2>Hospital Survey</h2>
+      <canvas id="hospitalChart"></canvas>
+    </div>
+
+    <!-- Hospital Staff Section with Auto-Scroll -->
+    <div class="hospital-staff">
+      <h2>Hospital Staff</h2>
+      <div class="staff-container">
+        <div class="staff-carousel">
+          <div class="staff-cards">
+            <!-- Original set of staff cards -->
+            <div class="staff-card">
+              <img src="th.jpg" alt="Doctor" />
+              <p>Dr.Munyai</p>
+              <span>Doctor</span>
+            </div>
+            <div class="staff-card">
+              <img src="th.jpg" alt="Doctor" />
+              <p>Dr.Munyai</p>
+              <span>Doctor</span>
+            </div>
+            <div class="staff-card">
+              <img src="th.jpg" alt="Doctor" />
+              <p>Dr.Munyai</p>
+              <span>Doctor</span>
+            </div>
+            <!-- Duplicated set for seamless scrolling -->
+            <div class="staff-card">
+              <img src="th.jpg" alt="Doctor" />
+              <p>Dr.Munyai</p>
+              <span>Doctor</span>
+            </div>
+            <div class="staff-card">
+              <img src="th.jpg" alt="Doctor" />
+              <p>Dr.Munyai</p>
+              <span>Doctor</span>
+            </div>
+            <div class="staff-card">
+              <img src="th.jpg" alt="Doctor" />
+              <p>Dr.Munyai</p>
+              <span>Doctor</span>
+            </div>
+            <div class="staff-card">
+              <img src="th.jpg" alt="Doctor" />
+              <p>Dr.Munyai</p>
+              <span>Doctor</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Additional Content Sections for other sidebar links -->
+  <div class="section-content" id="doctorsListContent">
+    <h2>Doctors List</h2>
+  </div>
+
+  <div class="section-content" id="patientsListContent">
+    <h2>Patients List</h2>
+    <p>Patients List section.</p>
+  </div>
+
+  <div class="section-content" id="appointmentsContent">
+    <h2>Appointment Details</h2>
+    <p>Appointment Details section.</p>
+  </div>
+
+  <div class="section-content" id="prescriptionsContent">
+    <h2>Prescription List</h2>
+    <p>You are on Prescription List section.</p>
+  </div>
+
+  <div class="section-content" id="deleteDoctorContent">
+    <h2>Delete Doctor</h2>
+    <!-- Delete Doctor Form in your admin dashboard -->
+      <form id="deleteDoctorForm" method="POST" action="delete_doctor.php">
+        <label for="deleteEmail">Enter Doctor's Email-ID:</label>
+        <input type="email" id="deleteEmail" name="email" required />
+        <button type="submit">Delete Doctor</button>
+      </form>
+  </div>
+
+  <div class="section-content" id="queriesContent">
+    <h2>Queries</h2>
+    <p>This is a sample content for the Queries section.</p>
+  </div>
+
+  <!-- Add Doctor Form -->
+  <div class="add-doctor-form" id="addDoctorForm">
+    <h2>Add Doctor</h2>
+    <form method="POST" action="add_doctor.php">
+      <label for="doctorName">Doctor Name:</label>
+      <input type="text" id="doctorName" name="doctorName" required />
+
+      <label for="specialization">Specialization:</label>
+      <select id="specialization" name="specialization" required>
+        <option value="" disabled selected>Select Specialization</option>
+        <option value="Cardiology">Cardiology</option>
+        <option value="Neurology">Neurology</option>
+        <option value="Therapist">Therapist</option>
+        <option value="General Medicine">General Medicine</option>
+      </select>
+
+      <label for="email">Email ID:</label>
+      <input type="email" id="email" name="email" required />
+
+      <label for="password">Password:</label>
+      <input type="password" id="password" name="password" required />
+
+      <label for="confirmPassword">Confirm Password:</label>
+      <input type="password" id="confirmPassword" name="confirmPassword" required />
+
+      <label for="consultancyFees">Consultancy Fees:</label>
+      <input type="number" id="consultancyFees" name="consultancyFees" required />
+
+      <button type="submit">Add Doctor</button>
+    </form>
+  </div>
+
+  <!-- Chart.js Library -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+    const headerEl = document.querySelector('.header');
+    const fullText = headerEl.textContent.trim();
+    let index = 0;
+    // Clear the header text initially
+    headerEl.textContent = '';
+
+    function typeWriter() {
+      if (index <= fullText.length) {
+        headerEl.textContent = fullText.substring(0, index);
+        index++;
+        setTimeout(typeWriter, 300); // Adjust typing speed as needed
+      }
+    }
+
+    typeWriter();
+});
+
+    // Function to animate (recount) the dashboard cards
+    function animateDashboardNumbers() {
+      const cards = document.querySelectorAll('.dashboard-cards .card h3');
+      cards.forEach((counter) => {
+        counter.innerText = "1"; // reset to 1
+        const target = +counter.getAttribute('data-target');
+        let count = 1;
+        const increment = Math.ceil(target / 200);
+        const updateCount = () => {
+          if (count < target) {
+            count += increment;
+            counter.innerText = count;
+            setTimeout(updateCount, 20);
+          } else {
+            counter.innerText = target;
+          }
+        };
+        updateCount();
+      });
+    }
+
+    // Create the chart with animation options (fade in from bottom effect)
+    let myChart;
+    function createChart() {
+      const ctx = document.getElementById('hospitalChart').getContext('2d');
+      myChart = new Chart(ctx, {
+        type: 'bar',
+        data: {
+          labels: ['Mar 11', 'Mar 12', 'Mar 13', 'Mar 14', 'Mar 15'],
+          datasets: [
+            {
+              label: 'Income (R)',
+              data: [1200, 1500, 1800, 2000, 2200],
+              backgroundColor: ['red', 'orange', 'yellow', 'green', 'blue'],
+            },
+            {
+              label: 'Expenses (R)',
+              data: [800, 1100, 1400, 1600, 1900],
+              backgroundColor: [
+                'rgba(255, 99, 132, 0.6)',
+                'rgba(255, 159, 64, 0.6)',
+                'rgba(255, 205, 86, 0.6)',
+                'rgba(75, 192, 192, 0.6)',
+                'rgba(54, 162, 235, 0.6)'
+              ],
+            },
+          ],
+        },
+        options: {
+          responsive: false,
+          maintainAspectRatio: false,
+          animation: {
+            duration: 1000,
+            easing: 'easeOutCubic',
+            delay: function(context) {
+              if (context.type === 'data' && context.mode === 'default' && !context.dropped) {
+                context.dropped = true;
+                return context.dataIndex * 100;
+              }
+              return 0;
+            }
+          },
+          scales: {
+            y: {
+              beginAtZero: true,
+              title: {
+                display: true,
+                text: 'Amount (R)',
+              },
+            },
+          },
+        },
+      });
+    }
+
+    // Initialize dashboard numbers and chart on page load
+    animateDashboardNumbers();
+    createChart();
+
+    // Utility function to hide all sections
+    function hideAllSections() {
+      document.getElementById('mainContent').classList.add('hidden');
+      document.getElementById('addDoctorForm').style.display = 'none';
+      document.getElementById('doctorsListContent').style.display = 'none';
+      document.getElementById('patientsListContent').style.display = 'none';
+      document.getElementById('appointmentsContent').style.display = 'none';
+      document.getElementById('prescriptionsContent').style.display = 'none';
+      document.getElementById('deleteDoctorContent').style.display = 'none';
+      document.getElementById('queriesContent').style.display = 'none';
+    }
+
+    // Utility function to set active class on the clicked sidebar link
+    function setActiveLink(link) {
+      const sidebarLinks = document.querySelectorAll('.sidebar ul li');
+      sidebarLinks.forEach((lnk) => lnk.classList.remove('active'));
+      link.classList.add('active');
+    }
+
+    // Sidebar Navigation Event Listeners
+
+    // Dashboard: Show main content with animation and re-run number count and chart animation.
+    const dashboardLink = document.querySelector('.dashboard-link');
+    dashboardLink.addEventListener('click', () => {
+      hideAllSections();
+      const mainContent = document.getElementById('mainContent');
+      mainContent.classList.remove('hidden');
+      // Re-trigger dashboard fade-in animation by re-adding the class
+      mainContent.classList.remove('animate-dashboard');
+      void mainContent.offsetWidth; // Force reflow
+      mainContent.classList.add('animate-dashboard');
+
+      // Re-run dashboard card counting animation
+      animateDashboardNumbers();
+
+      // Reset and update the chart for a new animation sequence
+      if (myChart) {
+        myChart.reset();
+        myChart.update();
+      }
+
+      setActiveLink(dashboardLink);
+    });
+
+    // Add Doctor: Show Add Doctor form
+    const addDoctorLink = document.querySelector('.add-doctor-link');
+    addDoctorLink.addEventListener('click', () => {
+      hideAllSections();
+      document.getElementById('addDoctorForm').style.display = 'block';
+      setActiveLink(addDoctorLink);
+    });
+
+   
+// Doctors List sidebar link event listener
+  const doctorsListLink = document.querySelector('.doctors-list-link');
+  doctorsListLink.addEventListener('click', () => {
+  // Hide other sections
+  hideAllSections();
+  const doctorsListSection = document.getElementById('doctorsListContent');
+  doctorsListSection.style.display = 'block';
+  setActiveLink(doctorsListLink);
+
+  // Load the doctor list via AJAX (using fetch)
+  fetch('doctor_list.php')
+    .then(response => response.text())
+    .then(data => {
+      // Insert the fetched HTML into the doctorsListContent div
+      doctorsListSection.innerHTML = '<h2>Doctors List</h2>' + data;
+    })
+    .catch(error => {
+      doctorsListSection.innerHTML = '<h2>Doctors List</h2><p>Error loading doctor list.</p>';
+      console.error('Error fetching doctor list:', error);
+    });
+});
+
+
+   
+// Patients List sidebar link event listener
+  const patientsListLink = document.querySelector('.patients-list-link');
+  patientsListLink.addEventListener('click', () => {
+// Hide all other sections
+  hideAllSections();
+
+// Display the Patients List section
+  const patientsListSection = document.getElementById('patientsListContent');
+  patientsListSection.style.display = 'block';
+  setActiveLink(patientsListLink);
+
+// Use fetch to load the patients list from patients_list.php
+  fetch('patients_list.php')
+    .then(response => response.text())
+    .then(data => {
+// Insert the fetched HTML into the patientsListContent div
+      patientsListSection.innerHTML = '<h2>Patients List</h2>' + data;
+    })
+    .catch(error => {
+      patientsListSection.innerHTML = '<h2>Patients List</h2><p>Error loading patients list.</p>';
+      console.error('Error fetching patients list:', error);
+    });
+});
+
+
+    // Appointment Details
+    const appointmentsLink = document.querySelector('.appointments-link');
+    appointmentsLink.addEventListener('click', () => {
+      hideAllSections();
+      document.getElementById('appointmentsContent').style.display = 'block';
+      setActiveLink(appointmentsLink);
+    });
+
+    // Prescription List
+    const prescriptionsLink = document.querySelector('.prescriptions-link');
+    prescriptionsLink.addEventListener('click', () => {
+      hideAllSections();
+      document.getElementById('prescriptionsContent').style.display = 'block';
+      setActiveLink(prescriptionsLink);
+    });
+
+    // Delete Doctor
+    const deleteDoctorLink = document.querySelector('.delete-doctor-link');
+    deleteDoctorLink.addEventListener('click', () => {
+      hideAllSections();
+      document.getElementById('deleteDoctorContent').style.display = 'block';
+      setActiveLink(deleteDoctorLink);
+    });
+
+    // Queries
+    const queriesLink = document.querySelector('.queries-link');
+    queriesLink.addEventListener('click', () => {
+      hideAllSections();
+      document.getElementById('queriesContent').style.display = 'block';
+      setActiveLink(queriesLink);
+    });
+  </script>
+</body>
+</html>

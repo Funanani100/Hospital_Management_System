@@ -1,0 +1,281 @@
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    height: 100vh;
+    border: 10px solid purple;
+    border-bottom: 0;
+    border-top: 0;
+    border-left:15px solid purple;
+}
+
+.dashboard {
+    display: flex;
+    width: 95%;
+    margin-left: 50px;
+}
+
+/* Sidebar */
+.sidebar {
+    margin-top: 120px;
+    width: 80px;
+    background-color: #fffefe;
+    padding: 20px 10px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.sidebar button {
+    margin: 20px 0;
+    padding: 10px;
+    border: none;
+    background-color: #ddd;
+    cursor: pointer;
+    border-radius: 5px;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.sidebar button i {
+    font-size: 26px;
+    color: rgb(132, 132, 132);
+    transition: color 0.3s ease;
+}
+
+.sidebar button:hover i {
+    color: #a91af1;
+}
+/*
+.sidebar button:hover {
+    background-color: #bd61eb;
+}*/
+
+.label {
+    font-size: 18px;
+    color: rgb(132, 132, 132);
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.3s ease, visibility 0.3s ease;
+    position: absolute;
+    top: 50px;
+    white-space: nowrap;
+    font-family: Georgia, 'Times New Roman', Times, serif;
+}
+
+.sidebar button:hover .label {
+    opacity: 1;
+    visibility: visible;
+    color: #ff0000;
+    position: absolute;
+    top: 45px;
+}
+
+/* Main Content */
+.main-content {
+    flex-grow: 1;
+    padding: 20px;
+}
+
+header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: #31a0ef;
+    
+}
+
+header span{
+    color: rgb(11, 5, 56);
+    font-size: 50%;
+    margin-left: 15px;
+    font-style: italic;
+    font-family: 'Times New Roman', Times, serif;
+}
+
+header h1{
+    margin-left: 10px;
+    font-family: 'Times New Roman', Times, serif;
+    color: rgb(11, 5, 56);
+}
+
+header .notifications{
+    margin-right: 30px;
+    background-color: transparent;
+    border: none;
+}
+
+header input {
+    padding: 10px;
+    width: 300px;
+    border-radius: 5px;
+    border: 1px solid #ddd;
+}
+
+/* General button styling */
+.notifications {
+    margin: 20px;
+    padding: 10px;
+    border: none;
+    background-color: #ddd;
+    cursor: pointer;
+    border-radius: 5px;
+    position: relative; /* Needed for positioning the label */
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    transition: background-color 0.3s ease;
+}
+
+/* Icon Styling */
+.notifications i {
+    font-size: 24px;
+    color: rgb(11, 5, 56); /* Initial icon color */
+    transition: color 0.3s ease;
+}
+
+.notifications:hover i {
+    color: red; /* Icon changes to red on hover */
+}
+
+/* Label Styling */
+.notifications .label {
+    margin-top: 5px;
+    font-size: 14px;
+    color: rgb(132, 132, 132); /* Default label color */
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.3s ease, visibility 0.3s ease;
+    white-space: nowrap;
+}
+
+.notifications:hover .label {
+    opacity: 1;
+    visibility: visible;
+    color: red; /* Label text changes to red */
+}
+
+
+/* Summary Cards */
+.summary-cards {
+    display: flex;
+    justify-content: space-around;
+    margin: 20px 0;
+    background-color: #ddd;
+    height: 200px;
+}
+
+.card {
+    background-color: #d1c4e9;
+    padding: 20px;
+    border-radius: 10px;
+    text-align: center;
+    width: 110px;
+    height: 120px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    margin-top: 2%;
+}
+
+.card h2 {
+    font-size: 18px;
+}
+
+.card p {
+    font-size: 24px;
+    font-weight: bold;
+}
+
+/* Content */
+.content {
+    display: flex;
+    gap: 20px;
+}
+
+.chart-container {
+    flex: 2;
+}
+
+.recent-patients {
+    flex: 1;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+table th, table td {
+    border: 1px solid #ddd;
+    padding: 10px;
+    text-align: left;
+}
+
+table th {
+    background-color: #f5f5f5;
+}
+
+/* Right Sidebar */
+.right-sidebar {
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 30px;
+    margin-left: 50px;
+   
+}
+
+.right-sidebar .profile{
+    background-color: #a91af1;
+    height: 20em;
+    width: 300px;
+}
+
+.right-sidebar .doctor-list{
+    background-color: #a91af1;
+    height: 45em;
+    width: 300px;
+    height: 40em;
+    margin-bottom: -15px;
+}
+
+.profile {
+    text-align: center;
+}
+
+.profile-pic {
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    background-color: #0f0f53;
+    margin: 0 auto;
+}
+
+.profile img{
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    margin: 0 auto;
+}
+
+.doctor-list ul{
+    list-style: none;
+    padding: 0;
+    margin-left: 10px;
+
+}
+
+.doctor-list h2{
+    margin-left: 10px;
+}
+
+.doctor-list li {
+    padding: 10px;
+    border-bottom: 1px solid #ddd;
+}
+
+.doctor-list li:last-child {
+    border-bottom: none;
+}

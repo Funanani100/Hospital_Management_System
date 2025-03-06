@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Life Care+</title>
+  <link rel="stylesheet" href="signUp_panel.css" />
+</head>
+<body>
+  <div class="container">
+    <div class="left-section">
+      <h1>Welcome</h1>
+      <p>LifeCare+</p>
+    </div>
+    <div class="right-section">
+      <div class="nav">
+        <a href="#">HOME</a>
+        <a href="aboutUs.html">ABOUT US</a>
+        <a href="#">CONTACT</a>
+      </div>
+      <h2 id="form-heading">Register as Patient</h2>
+      <div class="tabs">
+        <button data-tab="patient" onclick="switchTab('patient')">Patient</button>
+        <button data-tab="doctor" onclick="switchTab('doctor')">Doctor</button>
+        <button data-tab="receptionist" onclick="switchTab('receptionist')">Admin</button>
+      </div>
+      
+      <!-- Use a container for the form; the default content is the patient form -->
+      <div id="formContainer">
+        <form id="patientForm" method="POST" action="signUp.php">
+          <input type="text" name="first_name" placeholder="First Name *" required>
+          <input type="text" name="last_name" placeholder="Last Name *" required>
+          <input type="email" name="email" placeholder="Your Email *" required>
+          <input type="tel" name="phone" placeholder="Your Phone *" required>
+          <input type="password" name="password" placeholder="Password *" required>
+          <input type="password" name="confirm_password" placeholder="Confirm Password *" required>
+          <div class="gender">
+            <label><input type="radio" name="gender" value="male" required> Male</label>
+            <label><input type="radio" name="gender" value="female" required> Female</label>
+          </div>
+          <div class="form-footer">
+            <a href="patients-panel-login.html">Already have an account?</a>
+            <button type="submit">Register</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <script src="signUp_panel.js"></script>
+</body>
+</html>
+
